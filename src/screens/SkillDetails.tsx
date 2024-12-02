@@ -49,17 +49,18 @@ export function SkillDetails() {
 
   return (
     <VStack flex={1}>
-      <VStack px="$8" bg="$blueNeki600" pt="$12">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon as={ArrowLeft} color="$white" size="xl" />
-        </TouchableOpacity>
-
-        <HStack
+      <VStack px="$5" bg="$blueNeki600" pt="$12">
+      <HStack
           justifyContent="space-between"
           alignItems="center"
           mt="$4"
           mb="$8"
         >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon as={ArrowLeft} color="$white" size="xl" />
+        </TouchableOpacity>
+
+        
           <Heading
             color="$gray100"
             fontFamily="$heading"
@@ -76,7 +77,7 @@ export function SkillDetails() {
       </VStack>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <VStack p="$8">
+        <VStack py="$8" px="$5">
           <Image
             source={{ uri: skill.image }}
             alt={`Imagem de ${skill.title}`}
@@ -87,18 +88,24 @@ export function SkillDetails() {
             h="$40"
           />
 
-          <HStack alignItems="center" justifyContent="flex-start" mt="$2" mb="$8">
-            <Box bg="$blueNeki600" rounded="$md" py="$1.5" px="$2.5">
-              <HStack>
-                {skill.category &&
-                  skill.category.map((category, index) => (
-                    <Text key={index} fontSize="$xs" color="$white">
-                      {category.name}
-                    </Text>
-                  ))}
-              </HStack>
-            </Box>
-          </HStack>
+<HStack alignItems="center" justifyContent="flex-start" mt="$2" mb="$4" flexWrap="wrap" >
+  {skill.category &&
+    skill.category.map((category, index) => (
+      <Box
+        key={index}
+        bg="$blueNeki600"
+        rounded="$md"
+        py="$1.5"
+        px="$2.5"
+        mr="$2"
+        mb="$2"
+      >
+        <Text fontSize="$xs" color="$white">
+          {category.name}
+        </Text>
+      </Box>
+    ))}
+</HStack>
 
           <MarkdownRenderer content={skill.description} />
 

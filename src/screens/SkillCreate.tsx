@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   VStack,
   HStack,
@@ -15,12 +15,12 @@ import { ScrollView, TouchableOpacity } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getSkillById, updateSkill } from "@services/SkillServices";
-import { Skills } from "../@types/skills";
+import { createSkill } from "@services/SkillServices";
+import { getCategories } from "@services/CategoryServices";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
-import { getCategories } from "@services/CategoryServices";
 import { CategoryCheckboxGroup } from "@components/Checkbox";
+import { AppNavigatorRoutesProps } from "@routes/app.routes";
 
 const skillValidationSchema = z.object({
   title: z.string().min(3, "O título deve ter pelo menos 3 caracteres."),
@@ -32,18 +32,14 @@ const skillValidationSchema = z.object({
     .min(1, "A skill deve ter pelo menos uma categoria."),
   image: z
     .string()
-    .url("Insira uma URL válida para a imagem.")
+    .url("Por favor, insira uma URL válida para a imagem.")
     .optional(),
 });
 
 type SkillFormData = z.infer<typeof skillValidationSchema>;
 
-export function SkillEdit() {
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { id } = route.params as { id: string };
-
-  const [skill, setSkill] = useState<Skills | null>(null);
+export function SkillCreate() {
+  const navigation = useNavigation<AppNavigatorRoutesProps>();
   const [categories, setCategories] = useState<{ name: string; id: number }[]>(
     []
   );
@@ -61,19 +57,6 @@ export function SkillEdit() {
     fetchCategories();
   }, []);
 
-  useEffect(() => {
-    const fetchSkill = async () => {
-      try {
-        const skillData = await getSkillById(Number(id));
-        setSkill(skillData);
-      } catch (error) {
-        console.error("Erro ao carregar detalhes da skill:", error);
-      }
-    };
-
-    fetchSkill();
-  }, [id]);
-
   const {
     control,
     handleSubmit,
@@ -81,23 +64,17 @@ export function SkillEdit() {
     reset,
   } = useForm<SkillFormData>({
     resolver: zodResolver(skillValidationSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      category: [],
+      image: "",
+    },
   });
-
-  useEffect(() => {
-    if (skill) {
-      reset({
-        title: skill.title,
-        description: skill.description,
-        category: skill.category.map((cat) => cat.name),
-        image: skill.image || "",
-      });
-    }
-  }, [skill, reset]);
 
   const onSubmit = async (data: SkillFormData) => {
     try {
-      const updatedData = {
-        id: Number(id),
+      const requestData = {
         title: data.title,
         description: data.description,
         category: data.category.map((catName) => {
@@ -106,17 +83,18 @@ export function SkillEdit() {
         }),
         image: data.image || "",
       };
-
-      await updateSkill(Number(id), updatedData);
-      navigation.goBack();
+  
+      await createSkill(requestData);
+      reset();
+      navigation.navigate("home"); 
     } catch (error) {
-      console.error("Erro ao atualizar a skill:", error);
+      console.error("Erro ao criar skill:", error);
     }
   };
 
   return (
     <VStack flex={1}>
-      <VStack px="$5" bg="$blueNeki600" pt="$12">
+    <VStack px="$5" bg="$blueNeki600" pt="$12">
         <HStack
           alignItems="center"
           mt="$4"
@@ -135,7 +113,7 @@ export function SkillEdit() {
             left="50%"
             transform={[{ translateX: -50 }]}
           >
-            Editar Habilidade
+            Criar Habilidade
           </Heading>
         </HStack>
       </VStack>
@@ -157,7 +135,7 @@ export function SkillEdit() {
                   placeholder="Digite o título"
                 />
                 {errors.title && (
-                  <Text fontSize="$sm" mt="$2" color="$red500">
+                  <Text fontSize="$sm" color="$red500">
                     {errors.title.message}
                   </Text>
                 )}
@@ -191,7 +169,7 @@ export function SkillEdit() {
                   />
                 </Textarea>
                 {errors.description && (
-                  <Text fontSize="$sm" mt="$2" color="$red500">
+                  <Text fontSize="$sm" color="$red500">
                     {errors.description.message}
                   </Text>
                 )}
@@ -213,7 +191,7 @@ export function SkillEdit() {
                   onChange={field.onChange}
                 />
                 {errors.category && (
-                  <Text fontSize="$sm" mt="$2" color="$red500">
+                  <Text fontSize="$sm" color="$red500">
                     {errors.category.message}
                   </Text>
                 )}
@@ -236,7 +214,7 @@ export function SkillEdit() {
                   placeholder="Insira a URL da imagem"
                 />
                 {errors.image && (
-                  <Text fontSize="$sm" mt="$2" color="$red500">
+                  <Text fontSize="$sm" color="$red500">
                     {errors.image.message}
                   </Text>
                 )}
@@ -247,7 +225,7 @@ export function SkillEdit() {
           <Button
             onPress={handleSubmit(onSubmit)}
             mt="$8"
-            title="Salvar Alterações"
+            title="Criar Skill"
           />
         </VStack>
       </ScrollView>

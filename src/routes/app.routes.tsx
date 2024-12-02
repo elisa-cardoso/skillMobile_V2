@@ -2,9 +2,7 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { Home } from "@screens/Home";
 import { Library } from "@screens/Library";
-import { SkillManagement } from "@screens/SkillManagement";
 import { gluestackUIConfig } from "../../config/gluestack-ui.config";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Platform } from "react-native";
@@ -12,11 +10,12 @@ import { StackNavigator } from "./stack.routes";
 import { useAuth } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesProps } from "./auth.routes";
+import { SkillCreate } from "@screens/SkillCreate";
 
 type AppRoutes = {
   home: undefined;
   library: undefined;
-  skillManagement: undefined;
+  skillCreate: undefined;
 };
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>;
@@ -70,11 +69,11 @@ export function AppRoutes() {
         }}
       />
       <Screen
-        name="skillManagement"
-        component={SkillManagement}
+        name="skillCreate"
+        component={SkillCreate}
         options={{
           tabBarIcon: ({ color }) => (
-            <Icon name="settings" color={color} size={iconSize} />
+            <Icon name="add-circle" color={color} size={iconSize} />
           ),
         }}
       />
