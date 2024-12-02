@@ -14,11 +14,6 @@ export function HomeHeader() {
   const { logout: contextLogout, login } = useAuth();
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
-  useEffect(() => {
-    console.log("Login no contexto:", login);
-    AsyncStorage.getItem('login').then(value => console.log("Login no AsyncStorage:", value));
-  }, [login]);
-
   const handleLogout = async () => {
     try {
       contextLogout();

@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [login, setLogin] = useState<string | null>(null);
 
   const auth = (token: string, login: string) => {
-    console.log("auth chamado com:", { token, login });
     setIsAuthenticated(true);
     setLogin(login);
     AsyncStorage.setItem('token', token);
@@ -39,8 +38,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       try {
         const storedToken = await AsyncStorage.getItem('token');
         const storedLogin = await AsyncStorage.getItem('login');
-
-        console.log("Dados armazenados recuperados:", { storedToken, storedLogin });
 
         if (storedToken && storedLogin) {
           setIsAuthenticated(true);

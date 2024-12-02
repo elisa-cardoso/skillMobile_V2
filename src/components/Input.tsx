@@ -3,9 +3,10 @@ import { ComponentProps } from 'react'
 
 type Props = ComponentProps<typeof InputField>
 
-export function Input({ ...props }: Props) {
+export function Input({ style,...props }: Props) {
   return (
     <GluestackInput
+    style={style}
       bg="$gray700"
       h="$14"
       px="$4"

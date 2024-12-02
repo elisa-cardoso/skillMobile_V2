@@ -14,8 +14,9 @@ export async function getSkillsByTitle(title: string): Promise<Skills[]> {
 export async function getSkillsByTitleAndCategory(
   categoryId: number | null,
   title: string | null,
-  page: number = 0, 
-  size: number = 10
+  page: number = 1, 
+  size: number = 10,
+  sortDirection: string = "ASC"
 ): Promise<PaginatedSkills> {
   const response = await api.get(`/skill/search`, {
     params: {
@@ -23,6 +24,7 @@ export async function getSkillsByTitleAndCategory(
       title,
       page,
       size,
+      sortDirection
     }
   });
   return response.data;

@@ -7,7 +7,6 @@ export async function signIn(login: string, password: string): Promise<LoginResp
     const requestData: LoginRequest = { login, password };
     try {
       const response = await api.post<LoginResponse>("/auth/login", requestData);
-      console.log("Resposta da API:", response.data);
       
       if (response.data.token) {
         await AsyncStorage.setItem("token", response.data.token);

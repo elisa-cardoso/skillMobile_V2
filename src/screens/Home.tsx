@@ -1,13 +1,12 @@
 import { CategoryFilter } from "@components/CategoryFilter";
 import { HomeHeader } from "@components/HomeHeader";
-import { Center, Heading, Text, VStack } from "@gluestack-ui/themed";
-import { useState, useEffect, useCallback } from "react";
+import { Center, Heading, Text, VStack, HStack } from "@gluestack-ui/themed";
+import { useState, useEffect } from "react";
 import { FlatList } from "react-native";
 import { PostCard } from "@components/PostCard";
 import { getCategories } from "@services/CategoryServices";
 import { getSkillsByTitleAndCategory } from "@services/SkillServices";
 import { Skills } from "../@types/skills";
-import { debounce } from "lodash";
 
 export function Home() {
   const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
@@ -15,11 +14,11 @@ export function Home() {
   const [filteredSkills, setFilteredSkills] = useState<Skills[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [searchTitle, setSearchTitle] = useState<string>("");
-  const [pageIndex, setPageIndex] = useState(0);
+  const [searchTitle, setSearchTitle] = useState<string>(""); 
+  const [currentPage, setCurrentPage] = useState(1);
   const perPage = 10;
+  const [sortDirection, setSortDirection] = useState("ASC");
 
   useEffect(() => {
     getCategories()
@@ -27,37 +26,51 @@ export function Home() {
       .catch(() => setCategories([]));
   }, []);
 
-  const fetchSkills = useCallback(
-    debounce(async (categoryId: number | null, title: string, page: number, size: number) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getSkillsByTitleAndCategory(categoryId, title, page, size);
-        setFilteredSkills(data.skills || []);
-        setTotalCount(data.totalElements);
-        setTotalPages(data.totalPages);
-      } catch (err) {
-        setError("Erro ao carregar conhecimentos.");
-      } finally {
-        setLoading(false);
-      }
-    }, 500),
-    []
-  );
-  useEffect(() => {
-    fetchSkills(selectedCategory, searchTitle, pageIndex, perPage);
+  const fetchSkills = async (categoryId: number | null, title: string, page: number, size: number, sortDirection: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getSkillsByTitleAndCategory(categoryId, title, page, size, sortDirection);
+      setFilteredSkills(data.skills || []);
+      setTotalPages(data.totalPages || 0);
+    } catch (err) {
+      setError("Erro ao carregar conhecimentos.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return () => {
-      fetchSkills.cancel();
-    };
-  }, [selectedCategory, searchTitle, pageIndex, perPage, fetchSkills]);
+  useEffect(() => {
+    fetchSkills(selectedCategory, searchTitle, currentPage, perPage, sortDirection);
+  }, [selectedCategory, searchTitle, currentPage, perPage, sortDirection]);
 
   const handleCategorySelect = (categoryId: number) => {
     if (selectedCategory === categoryId) {
-      setSelectedCategory(null); 
+      setSelectedCategory(null);
     } else {
-      setSelectedCategory(categoryId); 
+      setSelectedCategory(categoryId);
     }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
+
+  const handleSortChange = (sortDirection: string) => {
+    setSortDirection(sortDirection);
+    setCurrentPage(1);
+  };
+
+  const handleSearchTitleChange = (title: string) => {
+    setSearchTitle(title);
   };
 
   return (
@@ -87,7 +100,15 @@ export function Home() {
 
       {error && <Text>{error}</Text>}
 
-      <PostCard skills={filteredSkills} />
+      <PostCard
+        skills={filteredSkills}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPrevPage={handlePrevPage}
+        onNextPage={handleNextPage}
+        onSortChange={handleSortChange}
+        onSearchTitleChange={handleSearchTitleChange}
+      />
     </VStack>
   );
 }

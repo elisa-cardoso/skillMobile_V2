@@ -9,13 +9,12 @@ import {
 } from "@gluestack-ui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import Logo from "@assets/logo-branco.png";
-import { Input } from "@components/Input"; // Assumindo que o Input já está com forwardRef
+import { Input } from "@components/Input"; 
 import { Button } from "@components/Button";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { useNavigation } from "@react-navigation/native";
 import { signIn } from "@services/UserServices";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth } from "../context/AuthContext";
 
 export function SignIn() {
@@ -37,8 +36,6 @@ export function SignIn() {
   const handleSignIn = async () => {
     try {
       const response = await signIn(login, password);
-      console.log("Resposta de signIn:", response);
-
       if (response) {
         auth(response.token, response.login);
 
