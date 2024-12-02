@@ -8,10 +8,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
 import { useAuth } from '../context/AuthContext';
+import { useEffect } from 'react';
 
 export function HomeHeader() {
-  const { logout: contextLogout } = useAuth();
+  const { logout: contextLogout, login } = useAuth();
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
+
+  useEffect(() => {
+    console.log("Login no contexto:", login);
+    AsyncStorage.getItem('login').then(value => console.log("Login no AsyncStorage:", value));
+  }, [login]);
 
   const handleLogout = async () => {
     try {
@@ -30,7 +36,7 @@ export function HomeHeader() {
   };
   
   return (
-    <HStack bg="$blueNeki600" pt='$16' pb='$5' px='$8' alignItems='center' gap='$4'>
+    <HStack bg="$blueNeki600" pt='$16' pb='$5' px='$5' alignItems='center' gap='$4'>
         <Image
                 source={Logo}
                 alt="Logo"
@@ -38,10 +44,10 @@ export function HomeHeader() {
               />
       <VStack flex={1}>
         <Text color="$gray100" fontSize="$sm">
-          Olá
+          Bem Vindo(a)!
         </Text>
         <Heading color="$gray100" fontSize="$md">
-          Arthur Rios
+          {login}
         </Heading>
       </VStack>
       <TouchableOpacity onPress={handleLogout}>

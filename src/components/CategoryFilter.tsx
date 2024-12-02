@@ -13,7 +13,7 @@ export function CategoryFilter({ name, isActive, onPress, ...props }: Props) {
       mr="$3"
       minWidth="$24"
       h="$10"
-      bg={isActive ? '$blueNeki600' : '$gray600'}
+      bg={isActive ? '$blueNeki600' : '$gray500'}
       rounded="$md"
       justifyContent="center"
       alignItems="center"

@@ -16,7 +16,6 @@ api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig): Promise<InternalAxiosRequestConfig> => {
 
     const token = await AsyncStorage.getItem('token');
-    console.log("Token Armazenado:", token);
 
     if (token) {
       if (config.headers) {

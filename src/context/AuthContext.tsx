@@ -1,10 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import api from '@services/Api';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface AuthContextData {
   isAuthenticated: boolean;
-  auth: (token: string) => void;
+  auth: (token: string, login: string) => void;
   logout: () => void;
+  login: string | null;
 }
 
 interface AuthProviderProps {
@@ -15,19 +17,46 @@ const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [login, setLogin] = useState<string | null>(null);
 
-  const auth = (token: string) => {
+  const auth = (token: string, login: string) => {
+    console.log("auth chamado com:", { token, login });
     setIsAuthenticated(true);
+    setLogin(login);
     AsyncStorage.setItem('token', token);
+    AsyncStorage.setItem('login', login);
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    setLogin(null);
     AsyncStorage.removeItem('token');
+    AsyncStorage.removeItem('login');
   };
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedLogin = await AsyncStorage.getItem('login');
+
+        console.log("Dados armazenados recuperados:", { storedToken, storedLogin });
+
+        if (storedToken && storedLogin) {
+          setIsAuthenticated(true);
+          setLogin(storedLogin);
+          api.defaults.headers.Authorization = `Bearer ${storedToken}`;
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados do usuário:", error);
+      }
+    };
+
+    loadUserData();
+  }, []);
   
   return (
-    <AuthContext.Provider value={{ isAuthenticated, auth, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, auth, logout, login }}>
       {children}
     </AuthContext.Provider>
   );

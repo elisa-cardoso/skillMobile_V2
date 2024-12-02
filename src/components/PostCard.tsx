@@ -34,13 +34,14 @@ export function PostCard({ skills }: PostCardProps) {
           onPress={() => goToDetails(skill.id.toString())}
         >
           <HStack
-            bg="$gray500"
+            borderWidth="$1"
+            borderColor="$gray400"
             alignItems="center"
             p="$2"
             pr="$4"
             rounded="$md"
             mb="$3"
-            mx="$8"
+            mx="$5"
           >
             <Image
               source={{ uri: skill.image }}

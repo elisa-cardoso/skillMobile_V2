@@ -25,7 +25,6 @@ export async function getSkillsByTitleAndCategory(
       size,
     }
   });
-  console.log('Resposta da API:', response.data); 
   return response.data;
 }
 

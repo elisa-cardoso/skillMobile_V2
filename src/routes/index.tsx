@@ -14,8 +14,10 @@ export function Routes() {
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = await AsyncStorage.getItem('token');
-      if (token) {
-        auth(token); 
+      const login = await AsyncStorage.getItem('login');
+
+      if (token && login) {
+        auth(token, login);
       }
     };
 

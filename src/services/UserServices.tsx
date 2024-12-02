@@ -7,7 +7,7 @@ export async function signIn(login: string, password: string): Promise<LoginResp
     const requestData: LoginRequest = { login, password };
     try {
       const response = await api.post<LoginResponse>("/auth/login", requestData);
-      console.log("Resposta do login:", response.data);
+      console.log("Resposta da API:", response.data);
       
       if (response.data.token) {
         await AsyncStorage.setItem("token", response.data.token);
@@ -18,7 +18,10 @@ export async function signIn(login: string, password: string): Promise<LoginResp
         await AsyncStorage.setItem("login", response.data.login);
       }
   
-      return response.data;
+      return {
+        token: response.data.token,
+        login: response.data.login,
+      };
     } catch (error) {
       if (isAxiosError(error)) {
         console.error("Erro ao fazer login:", error.response);

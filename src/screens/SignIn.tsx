@@ -24,11 +24,9 @@ export function SignIn() {
 
   const { auth } = useAuth(); 
 
-  // Estados locais para os campos de formulário
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   
-  // Estados para erros
   const [loginError, setLoginError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -37,12 +35,12 @@ export function SignIn() {
   };
 
   const handleSignIn = async () => {
-    console.log("Dados de login:", { login, password });
     try {
       const response = await signIn(login, password);
+      console.log("Resposta de signIn:", response);
 
-      if (response && response.token) {
-        auth(response.token);
+      if (response) {
+        auth(response.token, response.login);
 
         navigationHome.reset({
           index: 0,

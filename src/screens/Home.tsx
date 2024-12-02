@@ -18,7 +18,7 @@ export function Home() {
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [searchTitle, setSearchTitle] = useState<string>("");
-  const [pageIndex, setPageIndex] = useState(1);
+  const [pageIndex, setPageIndex] = useState(0);
   const perPage = 10;
 
   useEffect(() => {
@@ -81,7 +81,7 @@ export function Home() {
         )}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 32 }}
+        contentContainerStyle={{ paddingHorizontal: 20 }}
         style={{ marginVertical: 25, maxHeight: 44, minHeight: 44 }}
       />
 
