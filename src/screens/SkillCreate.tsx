@@ -8,8 +8,7 @@ import {
   TextareaInput,
   Center,
 } from "@gluestack-ui/themed";
-import { ArrowLeft } from "lucide-react-native";
-import { ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +18,7 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { CategoryCheckboxGroup } from "@components/Checkbox";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
+import Toast from "react-native-toast-message";
 
 const skillValidationSchema = z.object({
   title: z.string().min(3, "O título deve ter pelo menos 3 caracteres."),
@@ -49,6 +49,12 @@ export function SkillCreate() {
         setCategories(categoryData);
       } catch (error) {
         console.error("Erro ao carregar as categorias:", error);
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Erro ao carregar categorias.",
+          text2: "Não foi possível carregar as categorias. Tente novamente.",
+        });
       }
     };
 
@@ -84,16 +90,31 @@ export function SkillCreate() {
 
       await createSkill(requestData);
       reset();
+
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Habilidade criada na biblioteca!",
+        text2: "A habilidade foi criada com sucesso.",
+      });
+
       navigation.navigate("home");
     } catch (error) {
       console.error("Erro ao criar skill:", error);
+
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Erro ao criar habilidade.",
+        text2: "Não foi possível criar a habilidade. Tente novamente.",
+      });
     }
   };
 
   return (
     <VStack flex={1}>
       <VStack px="$5" bg="$blueNeki600" pt="$12">
-        <Center pt="$4" pb="$6" >
+        <Center pt="$4" pb="$6">
           <Heading color="$white">Criar Habilidade</Heading>
         </Center>
       </VStack>

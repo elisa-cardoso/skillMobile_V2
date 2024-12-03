@@ -21,6 +21,7 @@ import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { getCategories } from "@services/CategoryServices";
 import { CategoryCheckboxGroup } from "@components/Checkbox";
+import Toast from "react-native-toast-message";
 
 const skillValidationSchema = z.object({
   title: z.string().min(3, "O título deve ter pelo menos 3 caracteres."),
@@ -55,6 +56,12 @@ export function SkillEdit() {
         setCategories(categoryData);
       } catch (error) {
         console.error("Erro ao carregar as categorias:", error);
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Erro ao carregar categorias",
+          text2: "Não foi possível carregar as categorias. Tente novamente.",
+        });
       }
     };
 
@@ -68,6 +75,12 @@ export function SkillEdit() {
         setSkill(skillData);
       } catch (error) {
         console.error("Erro ao carregar detalhes da skill:", error);
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Erro ao carregar habilidade",
+          text2: "Não foi possível carregar a habilidade. Tente novamente.",
+        });
       }
     };
 
@@ -108,9 +121,24 @@ export function SkillEdit() {
       };
 
       await updateSkill(Number(id), updatedData);
+
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Habilidade atualizada!",
+        text2: "As alterações foram salvas com sucesso.",
+      });
+
       navigation.goBack();
     } catch (error) {
       console.error("Erro ao atualizar a skill:", error);
+
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Erro ao atualizar habilidade.",
+        text2: "Não foi possível salvar as alterações. Tente novamente.",
+      });
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 import {
   Center,
   Heading,
@@ -9,50 +9,81 @@ import {
 } from "@gluestack-ui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import Logo from "@assets/logo-branco.png";
-import { Input } from "@components/Input"; 
+import { Input } from "@components/Input";
 import { Button } from "@components/Button";
-import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { useNavigation } from "@react-navigation/native";
-import { signIn } from "@services/UserServices";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { useAuth } from "../context/AuthContext";
+import Toast from "react-native-toast-message";
+import * as z from "zod";
+import { signIn } from "@services/UserServices";
+import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const loginSchema = z.object({
+  login: z.string().email("E-mail inválido.").min(1, "E-mail é obrigatório."),
+  password: z
+    .string()
+    .min(1, "Senha é obrigatória."),
+});
+
+type FormData = z.infer<typeof loginSchema>;
 
 export function SignIn() {
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const navigationHome = useNavigation<AppNavigatorRoutesProps>();
+  const { auth } = useAuth();
 
-  const { auth } = useAuth(); 
-
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  
-  const [loginError, setLoginError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(loginSchema),
+  });
 
   const handleNewAccount = () => {
     navigation.navigate("signUp");
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (data: FormData) => {
     try {
-      const response = await signIn(login, password);
+      const response = await signIn(data.login, data.password);
       if (response) {
         auth(response.token, response.login);
-
+        Toast.show({
+          type: "success",
+          position: "top",
+          text1: "Login realizado com sucesso!",
+          text2: "Você foi autenticado com sucesso.",
+        });
         navigationHome.reset({
           index: 0,
-          routes: [{ name: 'home' }],
+          routes: [{ name: "home" }],
         });
       } else {
-        console.error("Token de autenticação não encontrado ou resposta inválida.");
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Erro ao realizar login",
+          text2: "Por favor, confirme sua senha e tente novamente.",
+        });
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Erro ao fazer login",
+        text2: "Algo deu errado, tente novamente.",
+      });
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      showsVerticalScrollIndicator={false}
+    >
       <LinearGradient
         colors={["#186b67", "#121214"]}
         start={{ x: 0, y: 0 }}
@@ -62,7 +93,11 @@ export function SignIn() {
         <VStack flex={1}>
           <VStack flex={1} px="$10" pb="$16">
             <Center my="$24">
-              <Image source={Logo} alt="Logo" style={{ height: 90, width: 78 }} />
+              <Image
+                source={Logo}
+                alt="Logo"
+                style={{ height: 90, width: 78 }}
+              />
               <Text color="$gray100" fontSize="$sm">
                 Cada desafio é uma oportunidade.
               </Text>
@@ -71,32 +106,49 @@ export function SignIn() {
             <Center gap="$4">
               <Heading color="$gray100">Acessar biblioteca</Heading>
 
-              <Input
-                value={login}
-                onChangeText={setLogin}
-                placeholder="E-mail"
-                keyboardType="email-address"
-                autoCapitalize="none"
+              <Controller
+                control={control}
+                name="login"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="E-mail"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                )}
               />
-              {loginError && (
+              {errors.login && (
                 <Text color="$red500" fontSize="$sm">
-                  {loginError}
+                  {errors.login.message}
                 </Text>
               )}
 
-              <Input
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Senha"
-                secureTextEntry
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { value, onChange, onBlur } }) => (
+                  <Input
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Senha"
+                    secureTextEntry
+                  />
+                )}
               />
-              {passwordError && (
+              {errors.password && (
                 <Text color="$red500" fontSize="$sm">
-                  {passwordError}
+                  {errors.password.message}
                 </Text>
               )}
 
-              <Button title="Acessar painel" onPress={handleSignIn} />
+              <Button
+                title="Acessar painel"
+                onPress={handleSubmit(handleSignIn)}
+              />
             </Center>
 
             <Center flex={1} justifyContent="flex-end" marginTop="$4">

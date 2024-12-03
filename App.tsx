@@ -10,6 +10,7 @@ import { Loading } from "@components/Loading";
 import { Routes } from "@routes/index";
 import { AuthProvider } from "./src/context/AuthContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Lato_400Regular, Lato_700Bold });
@@ -25,6 +26,7 @@ export default function App() {
       {fontsLoaded ? <Routes /> : <Loading />}
     </GluestackUIProvider>
     </AuthProvider>
+    <Toast />
     </GestureHandlerRootView>
   );
 }

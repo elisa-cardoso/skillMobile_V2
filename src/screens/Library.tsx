@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { FlatList, Alert } from "react-native";
 import { VStack, Center, Heading } from "@gluestack-ui/themed";
+import Toast from "react-native-toast-message";
 import { UserSkill } from "../@types/userSkill";
 import { getAssociation, deleteAssociation, toggleFavorite } from "@services/UserSkillServices";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { LibraryStackRoutes } from "@routes/stack.routes";
 import { LibraryPostCard } from "@components/LibraryPostCard";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 export function Library() {
   const [associations, setAssociations] = useState<UserSkill[]>([]);
@@ -26,7 +27,12 @@ export function Library() {
       const data = await getAssociation();
       setAssociations(data);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível carregar as associações.");
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Erro ao carregar associações.",
+        text2: "Não foi possível carregar as associações. Tente novamente.",
+      });
     } finally {
       setLoading(false);
     }
@@ -44,12 +50,20 @@ export function Library() {
           onPress: async () => {
             try {
               await deleteAssociation(id);
-              setAssociations((prev) =>
-                prev.filter((assoc) => assoc.id !== id)
-              );
-              Alert.alert("Sucesso", "Associação excluída com sucesso!");
+              setAssociations((prev) => prev.filter((assoc) => assoc.id !== id));
+              Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Associação excluída.",
+                text2: "A associação foi excluída com sucesso!",
+              });
             } catch {
-              Alert.alert("Erro", "Não foi possível excluir a associação.");
+              Toast.show({
+                type: "error",
+                position: "top",
+                text1: "Erro ao excluir associação.",
+                text2: "Não foi possível excluir a associação. Tente novamente.",
+              });
             }
           },
         },
@@ -67,13 +81,22 @@ export function Library() {
             : assoc
         )
       );
+      Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Status alterado com sucesso!",
+      });
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível alterar o status de favorito.");
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Erro ao alterar status.",
+        text2: "Não foi possível atualizar o status de favorito.",
+      });
     }
   };
 
   const goToDetails = (skillId: string) => {
-    console.log({ skillId });
     navigation.navigate("librarySkillDetails", { id: skillId });
   };
 
@@ -99,6 +122,7 @@ export function Library() {
           />
         )}
       />
+      <Toast />
     </VStack>
   );
 }
