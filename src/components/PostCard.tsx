@@ -8,15 +8,13 @@ import {
   Heading,
   Icon,
 } from "@gluestack-ui/themed";
-import { ChevronRight, Menu } from "lucide-react-native";
+import { ChevronRight } from "lucide-react-native";
 import { Skills } from "../@types/skills";
-import { StackRoutes } from "@routes/stack.routes";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Pagination } from "./Pagination";
-import RNPickerSelect from "react-native-picker-select";
 import { SearchBar } from "./SearchBar";
-import Picker from "react-native-picker-select";
 import { SortDropdown } from "./SortDropdown";
+import { HomeStackRoutes } from "@routes/stack.routes";
 
 interface PostCardProps {
   skills: Skills[];
@@ -38,10 +36,10 @@ export function PostCard({
   onSearchTitleChange,
 }: PostCardProps) {
   const navigation =
-    useNavigation<StackNavigationProp<StackRoutes, "skillDetails">>();
+    useNavigation<StackNavigationProp<HomeStackRoutes, "homeSkillDetails">>();
 
   const goToDetails = (id: string) => {
-    navigation.navigate("skillDetails", { id });
+    navigation.navigate("homeSkillDetails", { id });
   };
 
   const handleSortChange = (value: string) => {

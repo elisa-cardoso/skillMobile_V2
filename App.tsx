@@ -9,10 +9,12 @@ import { config } from "./config/gluestack-ui.config";
 import { Loading } from "@components/Loading";
 import { Routes } from "@routes/index";
 import { AuthProvider } from "./src/context/AuthContext";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Lato_400Regular, Lato_700Bold });
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <AuthProvider>
     <GluestackUIProvider config={config}>
       <StatusBar
@@ -23,5 +25,6 @@ export default function App() {
       {fontsLoaded ? <Routes /> : <Loading />}
     </GluestackUIProvider>
     </AuthProvider>
+    </GestureHandlerRootView>
   );
 }

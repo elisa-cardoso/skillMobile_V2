@@ -6,7 +6,7 @@ import { Library } from "@screens/Library";
 import { gluestackUIConfig } from "../../config/gluestack-ui.config";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Platform } from "react-native";
-import { StackNavigator } from "./stack.routes";
+import { HomeStackNavigator, LibraryStackNavigator } from "./stack.routes";
 import { useAuth } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesProps } from "./auth.routes";
@@ -52,7 +52,7 @@ export function AppRoutes() {
     >
       <Screen
         name="home"
-        component={StackNavigator}
+        component={HomeStackNavigator}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="home" color={color} size={iconSize} />
@@ -61,7 +61,7 @@ export function AppRoutes() {
       />
       <Screen
         name="library"
-        component={Library}
+        component={LibraryStackNavigator}
         options={{
           tabBarIcon: ({ color }) => (
             <Icon name="collections-bookmark" color={color} size={iconSize} />

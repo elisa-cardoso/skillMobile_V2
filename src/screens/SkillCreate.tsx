@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   VStack,
-  HStack,
   Heading,
   Text,
-  Icon,
   Textarea,
   TextareaInput,
   Center,
@@ -83,10 +81,10 @@ export function SkillCreate() {
         }),
         image: data.image || "",
       };
-  
+
       await createSkill(requestData);
       reset();
-      navigation.navigate("home"); 
+      navigation.navigate("home");
     } catch (error) {
       console.error("Erro ao criar skill:", error);
     }
@@ -94,28 +92,10 @@ export function SkillCreate() {
 
   return (
     <VStack flex={1}>
-    <VStack px="$5" bg="$blueNeki600" pt="$12">
-        <HStack
-          alignItems="center"
-          mt="$4"
-          mb="$8"
-          justifyContent="space-between"
-        >
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon as={ArrowLeft} color="$white" size="xl" />
-          </TouchableOpacity>
-
-          <Heading
-            color="$gray100"
-            fontFamily="$heading"
-            fontSize="$lg"
-            position="absolute"
-            left="50%"
-            transform={[{ translateX: -50 }]}
-          >
-            Criar Habilidade
-          </Heading>
-        </HStack>
+      <VStack px="$5" bg="$blueNeki600" pt="$12">
+        <Center pt="$4" pb="$6" >
+          <Heading color="$white">Criar Habilidade</Heading>
+        </Center>
       </VStack>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -126,16 +106,16 @@ export function SkillCreate() {
             render={({ field: { value, onChange, onBlur } }) => (
               <VStack mb="$8">
                 <Text fontSize="$md" mb="$4" color="$white">
-                  Título da Skill
+                  Título
                 </Text>
                 <Input
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder="Digite o título"
+                  placeholder="Insira o título..."
                 />
                 {errors.title && (
-                  <Text fontSize="$sm" color="$red500">
+                  <Text fontSize="$sm" mt="$2" color="$red500">
                     {errors.title.message}
                   </Text>
                 )}
@@ -165,11 +145,11 @@ export function SkillCreate() {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    placeholder="Digite a descrição"
+                    placeholder="Insira a descrição..."
                   />
                 </Textarea>
                 {errors.description && (
-                  <Text fontSize="$sm" color="$red500">
+                  <Text fontSize="$sm" mt="$2" color="$red500">
                     {errors.description.message}
                   </Text>
                 )}
@@ -191,7 +171,7 @@ export function SkillCreate() {
                   onChange={field.onChange}
                 />
                 {errors.category && (
-                  <Text fontSize="$sm" color="$red500">
+                  <Text fontSize="$sm" mt="$2" color="$red500">
                     {errors.category.message}
                   </Text>
                 )}
@@ -211,10 +191,10 @@ export function SkillCreate() {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder="Insira a URL da imagem"
+                  placeholder="Insira a URL da imagem..."
                 />
                 {errors.image && (
-                  <Text fontSize="$sm" color="$red500">
+                  <Text fontSize="$sm" mt="$2" color="$red500">
                     {errors.image.message}
                   </Text>
                 )}
@@ -225,7 +205,7 @@ export function SkillCreate() {
           <Button
             onPress={handleSubmit(onSubmit)}
             mt="$8"
-            title="Criar Skill"
+            title="Criar Habilidade"
           />
         </VStack>
       </ScrollView>

@@ -15,12 +15,12 @@ import { useEffect, useState } from "react";
 import { getSkillById } from "@services/SkillServices";
 import { Skills } from "../@types/skills";
 import { MarkdownRenderer } from "@components/Markdown";
-import { StackRoutes } from "@routes/stack.routes";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { HomeStackRoutes } from "@routes/stack.routes";
 
 export function SkillDetails() {
   const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<StackRoutes, "skillEdit">>();
+  const navigation = useNavigation<StackNavigationProp<HomeStackRoutes, "skillEdit">>();
   
   const { id } = route.params as { id: string };
 

@@ -148,13 +148,13 @@ export function SkillEdit() {
             render={({ field: { value, onChange, onBlur } }) => (
               <VStack mb="$8">
                 <Text fontSize="$md" mb="$4" color="$white">
-                  Título da Skill
+                  Título
                 </Text>
                 <Input
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder="Digite o título"
+                  placeholder="Insira o título..."
                 />
                 {errors.title && (
                   <Text fontSize="$sm" mt="$2" color="$red500">
@@ -187,7 +187,7 @@ export function SkillEdit() {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    placeholder="Digite a descrição"
+                    placeholder="Insira a descrição..."
                   />
                 </Textarea>
                 {errors.description && (
@@ -233,7 +233,7 @@ export function SkillEdit() {
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  placeholder="Insira a URL da imagem"
+                  placeholder="Insira a URL da imagem..."
                 />
                 {errors.image && (
                   <Text fontSize="$sm" mt="$2" color="$red500">

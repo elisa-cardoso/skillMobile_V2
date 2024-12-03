@@ -4,6 +4,7 @@ export interface UserSkillLevelResponse {
   }
   export interface UserSkill {
     id: number;
+    skillId: number;
     skillName: string;
     level: number;
     score: number;
