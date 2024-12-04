@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, interpolate, Easing, runOnJS } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import { Bar } from 'react-native-progress';  // Importando o Bar da biblioteca
+import { Bar } from 'react-native-progress';
 import { QuestionCheckbox } from "@components/QuestionCheckbox";
 import { getQuestionsBySkillId, getUserSkillLevel, getValidAnswer } from "@services/QuestionServices";
 import { Question } from "../@types/question";

@@ -11,4 +11,5 @@ export interface UserSkillLevelResponse {
     image: string;
     description: string;
     favorite: boolean;
+    difficultyRating: string;
   }

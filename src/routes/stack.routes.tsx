@@ -5,6 +5,7 @@ import { Home } from "@screens/Home";
 import { SkillEdit } from "@screens/SkillEdit";
 import { Library } from "@screens/Library";
 import { Questions } from "@screens/Question";
+import { UserSkillAssociation } from "@screens/UserSkillAssociation";
 
 export type HomeStackRoutes = {
   galery: undefined;
@@ -17,6 +18,7 @@ export type LibraryStackRoutes = {
   myLibrary: undefined;
   librarySkillDetails: { id: string };
   skillEdit: { id: string };
+  association: undefined;
 };
 
 const HomeStack = createNativeStackNavigator<HomeStackRoutes>();
@@ -77,6 +79,13 @@ export function LibraryStackNavigator() {
       <LibraryStack.Screen
         name="skillEdit"
         component={SkillEdit}
+        options={{
+          animation: "slide_from_right", 
+        }}
+      />
+      <LibraryStack.Screen
+        name="association"
+        component={UserSkillAssociation}
         options={{
           animation: "slide_from_right", 
         }}
