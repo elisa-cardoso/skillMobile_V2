@@ -23,7 +23,7 @@ export function ProgressBar({ total, current }: Props) {
     }
   })
   useEffect(() => {
-    sharedProgress.value = withTiming(percentage);
+    sharedProgress.value = withTiming(percentage, { duration: 500 });
   },[current])
   return (
     <View style={styles.track}>

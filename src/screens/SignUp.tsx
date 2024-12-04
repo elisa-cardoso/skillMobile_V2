@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Center,
@@ -6,35 +7,43 @@ import {
   ScrollView,
   Text,
   VStack,
+  Pressable,
+  HStack,
 } from "@gluestack-ui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import Logo from "@assets/logo-branco.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import Toast from "react-native-toast-message";
 import * as z from "zod";
 import { signUp } from "@services/UserServices";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { View } from "react-native";
 
-// Validação do formulário de SignUp usando Zod
 const signUpForm = z
   .object({
-    login: z.string().email("E-mail inválido").min(1, "E-mail é obrigatório"),
+    login: z.string().email("E-mail inválido").min(1, "E-mail é obrigatório").default(""),
     password: z
       .string()
-      .min(6, { message: "A senha deve ter pelo menos 6 caracteres" })
+      .min(6, { message: "A senha deve ter pelo menos 6 caracteres." })
+      .max(15, { message: "A senha deve ter no máximo 15 caracteres." })
+      
       .regex(/[A-Z]/, {
-        message: "A senha deve ter pelo menos uma letra maiúscula",
+        message: "A senha deve ter pelo menos uma letra maiúscula.",
       })
       .regex(/[a-z]/, {
-        message: "A senha deve ter pelo menos uma letra minúscula",
+        message: "A senha deve ter pelo menos uma letra minúscula.",
       })
-      .regex(/[0-9]/, { message: "A senha deve ter pelo menos um número" }),
+      .regex(/[0-9]/, { message: "A senha deve ter pelo menos um número." })
+      .default(""),
     confirmPassword: z
       .string()
-      .min(6, { message: "Confirmação de senha é obrigatória" }),
+      .min(6, { message: "Confirmação de senha é obrigatória." })
+      .max(15, { message: "A senha deve ter no máximo 15 caracteres." })
+      .default(""),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem. Tente novamente.",
@@ -44,8 +53,16 @@ const signUpForm = z
 type SignUpForm = z.infer<typeof signUpForm>;
 
 export function SignUp() {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    useState(false);
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
-  const { control, handleSubmit, formState: { errors } } = useForm<SignUpForm>({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignUpForm>({
     resolver: zodResolver(signUpForm),
   });
 
@@ -132,13 +149,38 @@ export function SignUp() {
                 name="password"
                 control={control}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <Input
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    placeholder="Senha"
-                    secureTextEntry
-                  />
+                  <View
+                    style={{
+                      alignItems: "center",
+                      position: "relative",
+                      flex: 1,
+                    }}
+                  >
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Senha"
+                      secureTextEntry={!isPasswordVisible}
+                      flex={1}
+                      maxLength={20}
+                    />
+                    <Pressable
+                      style={{
+                        position: "absolute",
+                        right: 12,
+                        top: "50%",
+                        transform: [{ translateY: -12 }],
+                      }}
+                      onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                    >
+                      <Ionicons
+                        name={isPasswordVisible ? "eye-off" : "eye"}
+                        size={20}
+                        color="#7C7C8A"
+                      />
+                    </Pressable>
+                  </View>
                 )}
               />
               {errors.password && (
@@ -151,13 +193,40 @@ export function SignUp() {
                 name="confirmPassword"
                 control={control}
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <Input
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    placeholder="Confirmar senha"
-                    secureTextEntry
-                  />
+                  <View
+                    style={{
+                      alignItems: "center",
+                      position: "relative",
+                      flex: 1,
+                    }}
+                  >
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Confirmar senha"
+                      secureTextEntry={!isConfirmPasswordVisible}
+                      flex={1}
+                      maxLength={20}
+                    />
+                    <Pressable
+                      style={{
+                        position: "absolute",
+                        right: 12,
+                        top: "50%",
+                        transform: [{ translateY: -12 }]
+                      }}
+                      onPress={() =>
+                        setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
+                      }
+                    >
+                      <Ionicons
+                        name={isConfirmPasswordVisible ? "eye-off" : "eye"}
+                        size={20}
+                        color="#7C7C8A"
+                      />
+                    </Pressable>
+                  </View>
                 )}
               />
               {errors.confirmPassword && (
@@ -168,6 +237,7 @@ export function SignUp() {
 
               <Button
                 title="Cadastrar"
+                disabled={isSubmitting}
                 onPress={handleSubmit(handleSignUp)}
               />
             </Center>

@@ -1,4 +1,3 @@
-import React from 'react';
 import Markdown from 'react-native-markdown-display';
 import { StyleSheet, View, Text } from 'react-native';
 

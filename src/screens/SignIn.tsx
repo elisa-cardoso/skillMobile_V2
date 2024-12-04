@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Center,
@@ -6,11 +7,14 @@ import {
   ScrollView,
   Text,
   VStack,
+  HStack,
+  Pressable,
 } from "@gluestack-ui/themed";
 import { LinearGradient } from "expo-linear-gradient";
 import Logo from "@assets/logo-branco.png";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigatorRoutesProps } from "@routes/app.routes";
 import { useAuth } from "../context/AuthContext";
@@ -19,17 +23,21 @@ import * as z from "zod";
 import { signIn } from "@services/UserServices";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { View } from "react-native";
 
 const loginSchema = z.object({
-  login: z.string().email("E-mail inválido.").min(1, "E-mail é obrigatório."),
-  password: z
+  login: z
     .string()
-    .min(1, "Senha é obrigatória."),
+    .email("E-mail inválido.")
+    .min(1, "E-mail é obrigatório.")
+    .default(""),
+  password: z.string().min(1, "Senha é obrigatória.").default(""),
 });
 
 type FormData = z.infer<typeof loginSchema>;
 
 export function SignIn() {
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const navigationHome = useNavigation<AppNavigatorRoutesProps>();
   const { auth } = useAuth();
@@ -37,13 +45,17 @@ export function SignIn() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: zodResolver(loginSchema),
   });
 
   const handleNewAccount = () => {
     navigation.navigate("signUp");
+  };
+
+  const togglePasswordVisible = () => {
+    setIsPasswordVisible((prev) => !prev);
   };
 
   const handleSignIn = async (data: FormData) => {
@@ -130,13 +142,38 @@ export function SignIn() {
                 control={control}
                 name="password"
                 render={({ field: { value, onChange, onBlur } }) => (
-                  <Input
-                    value={value}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    placeholder="Senha"
-                    secureTextEntry
-                  />
+                  <View
+                    style={{
+                      alignItems: "center",
+                      position: "relative",
+                      flex: 1,
+                    }}
+                  >
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      placeholder="Senha"
+                      secureTextEntry={!isPasswordVisible}
+                      pr={10}
+                      maxLength={20}
+                    />
+                    <Pressable
+                      onPress={togglePasswordVisible}
+                      style={{
+                        position: "absolute",
+                        right: 12,
+                        top: "50%",
+                        transform: [{ translateY: -12 }],
+                      }}
+                    >
+                      <Ionicons
+                        name={isPasswordVisible ? "eye-off" : "eye"}
+                        size={20}
+                        color="#7C7C8A"
+                      />
+                    </Pressable>
+                  </View>
                 )}
               />
               {errors.password && (
@@ -146,8 +183,9 @@ export function SignIn() {
               )}
 
               <Button
-                title="Acessar painel"
+                title="Entrar"
                 onPress={handleSubmit(handleSignIn)}
+                disabled={isSubmitting}
               />
             </Center>
 

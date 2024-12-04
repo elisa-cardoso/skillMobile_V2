@@ -21,10 +21,15 @@ import { HomeStackRoutes } from "@routes/stack.routes";
 export function SkillDetails() {
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<HomeStackRoutes, "skillEdit">>();
+  const navigationQuestion = useNavigation<StackNavigationProp<HomeStackRoutes, "question">>();
   
   const { id } = route.params as { id: string };
 
   const [skill, setSkill] = useState<Skills | null>(null);
+
+  const handleNewAccount = () => {
+    navigationQuestion.navigate("question", { skillId: id });
+  };
 
   useEffect(() => {
     const fetchSkill = async () => {
@@ -109,7 +114,7 @@ export function SkillDetails() {
 
           <MarkdownRenderer content={skill.description} />
 
-          <Button mt="$8" title="Realizar teste" />
+          <Button mt="$8" title="Realizar teste" onPress={handleNewAccount} />
         </VStack>
       </ScrollView>
     </VStack>

@@ -1,4 +1,3 @@
-import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
 import { HStack, Image, Text, Heading, VStack } from '@gluestack-ui/themed';
 import Icon from 'react-native-vector-icons/MaterialIcons';

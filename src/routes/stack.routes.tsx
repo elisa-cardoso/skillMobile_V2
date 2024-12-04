@@ -4,11 +4,13 @@ import { SkillDetails } from "@screens/SkillDetails";
 import { Home } from "@screens/Home";
 import { SkillEdit } from "@screens/SkillEdit";
 import { Library } from "@screens/Library";
+import { Questions } from "@screens/Question";
 
 export type HomeStackRoutes = {
   galery: undefined;
   homeSkillDetails: { id: string };
   skillEdit: { id: string };
+  question: { skillId: string };
 };
 
 export type LibraryStackRoutes = {
@@ -44,6 +46,13 @@ export function HomeStackNavigator() {
           animation: "slide_from_right", 
         }}
       />
+      <HomeStack.Screen
+        name="question"
+        component={Questions}
+        options={{
+          animation: "slide_from_right", 
+        }}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -55,7 +64,7 @@ export function LibraryStackNavigator() {
         name="myLibrary"
         component={Library}
         options={{
-          animation: "fade", 
+          animation: "slide_from_right", 
         }}
       />
       <LibraryStack.Screen
@@ -69,7 +78,7 @@ export function LibraryStackNavigator() {
         name="skillEdit"
         component={SkillEdit}
         options={{
-          animation: "fade", 
+          animation: "slide_from_right", 
         }}
       />
     </LibraryStack.Navigator>

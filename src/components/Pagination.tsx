@@ -1,8 +1,5 @@
-import React from "react";
 import { Button, HStack, Icon, Text } from "@gluestack-ui/themed";
-
 import { ChevronLeft, ChevronRight } from "lucide-react-native";
-import { TouchableOpacity } from "react-native";
 
 interface PaginationProps {
   currentPage: number;

@@ -15,6 +15,7 @@ import { Pagination } from "./Pagination";
 import { SearchBar } from "./SearchBar";
 import { SortDropdown } from "./SortDropdown";
 import { HomeStackRoutes } from "@routes/stack.routes";
+import Animated, { SlideInRight, SlideOutRight, Layout, Easing } from 'react-native-reanimated';
 
 interface PostCardProps {
   skills: Skills[];
@@ -47,7 +48,7 @@ export function PostCard({
   };
 
   return (
-    <VStack style={{flex: 1}}>
+    <VStack style={{ flex: 1 }}>
       <HStack justifyContent="space-between" gap="$3" px="$5" mb="$4">
         <SearchBar
           onSearchChange={onSearchTitleChange}
@@ -61,42 +62,49 @@ export function PostCard({
         keyExtractor={(skill) => skill.id.toString()}
         renderItem={({ item: skill }) => (
           <TouchableOpacity onPress={() => goToDetails(skill.id.toString())}>
-            <HStack
-              borderWidth="$1"
-              borderColor="$gray400"
-              alignItems="center"
-              p="$2"
-              pr="$4"
-              rounded="$md"
-              mb="$3"
-              mx="$5"
+            <Animated.View
+              entering={SlideInRight.duration(400).easing(Easing.ease)}  
+              exiting={SlideOutRight.duration(400).easing(Easing.ease)}  
+              layout={Layout.springify().damping(20).mass(1).stiffness(90)} 
             >
-              <Image
-                source={{ uri: skill.image }}
-                alt={`Imagem de ${skill.title}`}
-                w="$16"
-                h="$16"
+              <HStack
+                borderWidth="$1"
+                borderColor="$gray400"
+                alignItems="center"
+                p="$2"
+                pr="$4"
                 rounded="$md"
-                mr="$4"
-                resizeMode="cover"
-              />
-              <VStack flex={1}>
-                <Heading fontSize="$lg" color="$white" fontFamily="$heading">
-                  {skill.title}
-                </Heading>
-                <Text
-                  fontSize="$sm"
-                  color="$gray200"
-                  mt="$1"
-                  mb="$2"
+                mb="$3"
+                mx="$5"
+                bg="$gray900"
+              >
+                <Image
+                  source={{ uri: skill.image }}
+                  alt={`Imagem de ${skill.title}`}
+                  w="$16"
+                  h="$16"
+                  rounded="$md"
                   mr="$4"
-                  numberOfLines={2}
-                >
-                  {skill.description}
-                </Text>
-              </VStack>
-              <Icon as={ChevronRight} color="$gray300" />
-            </HStack>
+                  resizeMode="cover"
+                />
+                <VStack flex={1}>
+                  <Heading fontSize="$lg" color="$white" fontFamily="$heading">
+                    {skill.title}
+                  </Heading>
+                  <Text
+                    fontSize="$sm"
+                    color="$gray200"
+                    mt="$1"
+                    mb="$2"
+                    mr="$4"
+                    numberOfLines={2}
+                  >
+                    {skill.description}
+                  </Text>
+                </VStack>
+                <Icon as={ChevronRight} color="$gray300" />
+              </HStack>
+            </Animated.View>
           </TouchableOpacity>
         )}
         ListFooterComponent={
