@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuthenticated(false);
     setLogin(null);
     AsyncStorage.removeItem('token');
-    AsyncStorage.removeItem('login');
   };
 
   useEffect(() => {

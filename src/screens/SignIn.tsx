@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
   Center,
@@ -24,6 +24,7 @@ import { signIn } from "@services/UserServices";
 import { AuthNavigatorRoutesProps } from "@routes/auth.routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const loginSchema = z.object({
   login: z
@@ -38,6 +39,8 @@ type FormData = z.infer<typeof loginSchema>;
 
 export function SignIn() {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
   const navigationHome = useNavigation<AppNavigatorRoutesProps>();
   const { auth } = useAuth();
@@ -46,9 +49,25 @@ export function SignIn() {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    const loadStoredData = async () => {
+      const storedLogin = await AsyncStorage.getItem("login");
+      const storedPassword = await AsyncStorage.getItem("password");
+      const rememberMe = await AsyncStorage.getItem("rememberMe");
+
+      if (rememberMe === "true") {
+        setValue("login", storedLogin || "");
+        setValue("password", storedPassword || "");
+      }
+    };
+
+    loadStoredData();
+  }, []);
 
   const handleNewAccount = () => {
     navigation.navigate("signUp");
@@ -63,12 +82,24 @@ export function SignIn() {
       const response = await signIn(data.login, data.password);
       if (response) {
         auth(response.token, response.login);
+
+        if (rememberMe) {
+          await AsyncStorage.setItem("login", data.login);
+          await AsyncStorage.setItem("password", data.password);
+          await AsyncStorage.setItem("rememberMe", "true");
+        } else {
+          await AsyncStorage.removeItem("login");
+          await AsyncStorage.removeItem("password");
+          await AsyncStorage.removeItem("rememberMe");
+        }
+
         Toast.show({
           type: "success",
           position: "top",
           text1: "Login realizado com sucesso!",
           text2: "Você foi autenticado com sucesso.",
         });
+
         navigationHome.reset({
           index: 0,
           routes: [{ name: "home" }],
@@ -89,6 +120,10 @@ export function SignIn() {
         text2: "Algo deu errado, tente novamente.",
       });
     }
+  };
+
+  const handleRememberMeChange = (value: boolean) => {
+    setRememberMe(value);
   };
 
   return (
@@ -181,13 +216,28 @@ export function SignIn() {
                   {errors.password.message}
                 </Text>
               )}
-
-              <Button
-                title="Entrar"
-                onPress={handleSubmit(handleSignIn)}
-                disabled={isSubmitting}
-              />
             </Center>
+
+            <HStack mt="$4" mb="$5">
+              <Pressable onPress={() => handleRememberMeChange(!rememberMe)}>
+                <HStack>
+                  <Ionicons
+                    name={rememberMe ? "checkbox" : "square-outline"}
+                    size={24}
+                    color="#C4C4CC"
+                  />
+                  <Text color="$gray100" ml="$2" mt="$0.5">
+                    Lembrar Senha
+                  </Text>
+                </HStack>
+              </Pressable>
+            </HStack>
+
+            <Button
+              title="Entrar"
+              onPress={handleSubmit(handleSignIn)}
+              disabled={isSubmitting}
+            />
 
             <Center flex={1} justifyContent="flex-end" marginTop="$4">
               <Text color="$gray100" fontSize="$sm" mb="$4" fontFamily="$body">
